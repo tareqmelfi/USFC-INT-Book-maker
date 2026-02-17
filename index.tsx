@@ -33,13 +33,6 @@ const SettingsIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${classNam
 const LogoutIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>;
 const InfoIcon = ({ className = "" }) => <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>;
 
-// --- Helper Functions ---
-const adjustHeight = (el: HTMLTextAreaElement | null) => {
-  if (!el) return;
-  el.style.height = 'auto';
-  el.style.height = (el.scrollHeight) + 'px';
-};
-
 // --- Sub-components (outside App to prevent re-creation and focus loss) ---
 
 const SidebarItem = ({ icon, label, active = false, onClick }: any) => (
@@ -72,10 +65,10 @@ const Header = ({ isLoggedIn, userProfile, view, setView, showProfileMenu, setSh
       <span className="text-xl font-black tracking-tighter text-indigo-900">SPEC</span>
     </div>
     <div className="hidden md:flex gap-8 text-sm font-bold text-slate-500">
-      <button onClick={() => setView('landing')} className="hover:text-indigo-600 transition-colors">المنتجات</button>
-      {isLoggedIn && <button onClick={() => setView('dashboard')} className="hover:text-indigo-600 transition-colors">لوحة التحكم</button>}
-      <button onClick={() => setView('pricing')} className="hover:text-indigo-600 transition-colors">الأسعار</button>
-      <button onClick={() => setView('about')} className="hover:text-indigo-600 transition-colors">عن المنصة</button>
+      <button onClick={() => setView('landing')} className={`hover:text-indigo-600 transition-colors ${view === 'landing' ? 'text-indigo-600' : ''}`}>المنتجات</button>
+      {isLoggedIn && <button onClick={() => setView('dashboard')} className={`hover:text-indigo-600 transition-colors ${view === 'dashboard' ? 'text-indigo-600' : ''}`}>لوحة التحكم</button>}
+      <button onClick={() => setView('pricing')} className={`hover:text-indigo-600 transition-colors ${view === 'pricing' ? 'text-indigo-600' : ''}`}>الأسعار</button>
+      <button onClick={() => setView('about')} className={`hover:text-indigo-600 transition-colors ${view === 'about' ? 'text-indigo-600' : ''}`}>عن المنصة</button>
     </div>
     <div className="flex items-center gap-4">
       {!isLoggedIn ? (
@@ -123,7 +116,7 @@ const Header = ({ isLoggedIn, userProfile, view, setView, showProfileMenu, setSh
 );
 
 const Footer = ({ setView }: any) => (
-  <footer className="bg-slate-900 text-white py-20 px-6 mt-auto">
+  <footer className="bg-slate-900 text-white py-20 px-6 shrink-0">
     <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12 text-right" dir="rtl">
       <div className="col-span-2 md:col-span-1">
         <div className="flex items-center gap-3 mb-6">
@@ -173,7 +166,6 @@ const Footer = ({ setView }: any) => (
     <div className="max-w-7xl mx-auto mt-20 pt-10 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-6">
       <p className="text-slate-500 text-[10px] font-black tracking-widest uppercase">© {new Date().getFullYear()} SPEC STUDIO. ALL RIGHTS RESERVED.</p>
       <div className="flex gap-6 text-slate-500">
-        {/* Social Icons Placeholder */}
         <span className="text-xs font-bold">X</span>
         <span className="text-xs font-bold">LinkedIn</span>
         <span className="text-xs font-bold">Instagram</span>
@@ -183,7 +175,7 @@ const Footer = ({ setView }: any) => (
 );
 
 const LandingPage = ({ setView, isLoggedIn }: any) => (
-  <div className="animate-slide-up flex flex-col min-h-screen">
+  <div className="animate-slide-up flex flex-col w-full">
     <div className="pt-48 pb-32 px-6 max-w-7xl mx-auto text-center">
       <div className="inline-flex items-center gap-2 bg-indigo-50 text-indigo-700 px-4 py-1.5 rounded-full text-[10px] font-black tracking-widest uppercase mb-10">
         <SparklesIcon className="w-3 h-3" /> النسخة التجريبية 3.0 متوفرة الآن
@@ -195,9 +187,29 @@ const LandingPage = ({ setView, isLoggedIn }: any) => (
       <p className="text-xl text-slate-500 max-w-2xl mx-auto mb-16 leading-relaxed font-medium">
         حول أفكارك، نصوصك، وبياناتك إلى عروض تقديمية ومستندات احترافية في ثوانٍ معدودة باستخدام أقوى تقنيات الذكاء الاصطناعي.
       </p>
-      <div className="flex flex-col sm:flex-row justify-center gap-6">
+      <div className="flex flex-col sm:flex-row justify-center gap-6 mb-24">
         <button onClick={() => setView(isLoggedIn ? 'creation-options' : 'signup')} className="bg-indigo-900 text-white px-12 py-5 rounded-full text-lg font-black shadow-2xl hover:scale-105 transition-transform">ابدأ رحلتك الآن</button>
         <button onClick={() => setView('about')} className="bg-white border-2 border-slate-100 text-slate-600 px-12 py-5 rounded-full text-lg font-black hover:bg-slate-50 transition-colors">تعرف على المزيد</button>
+      </div>
+      
+      {/* Stats Section */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto bg-white border border-slate-100 p-10 rounded-[3rem] shadow-sm">
+        <div>
+          <h4 className="text-4xl font-black text-indigo-600 mb-1 tracking-tighter">1M+</h4>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">مستخدم نشط</p>
+        </div>
+        <div>
+          <h4 className="text-4xl font-black text-indigo-600 mb-1 tracking-tighter">5M+</h4>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">مشروع تم إنشاؤه</p>
+        </div>
+        <div>
+          <h4 className="text-4xl font-black text-indigo-600 mb-1 tracking-tighter">99%</h4>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">نسبة الرضا</p>
+        </div>
+        <div>
+          <h4 className="text-4xl font-black text-indigo-600 mb-1 tracking-tighter">50+</h4>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">لغة مدعومة</p>
+        </div>
       </div>
     </div>
 
@@ -236,11 +248,34 @@ const LandingPage = ({ setView, isLoggedIn }: any) => (
         </div>
       </div>
     </div>
+    
+    {/* Step by Step Section */}
+    <div className="py-32 px-6 bg-white">
+        <div className="max-w-7xl mx-auto" dir="rtl">
+            <h2 className="text-4xl font-black text-indigo-950 mb-16 tracking-tighter text-right">كيف تبدأ في ثوانٍ؟</h2>
+            <div className="grid md:grid-cols-4 gap-8">
+                {[
+                    {step: "01", title: "صف فكرتك", desc: "اكتب وصفاً بسيطاً أو الصق نصاً مطولاً."},
+                    {step: "02", title: "اختر القالب", desc: "حدد النمط البصري والهوية المطلوبة."},
+                    {step: "03", title: "التوليد الذكي", desc: "يقوم SPEC ببناء المشروع بالكامل لك."},
+                    {step: "04", title: "التعديل والتحميل", desc: "عدل ما شئت ثم حمل بصيغة Word أو PDF."}
+                ].map((s, idx) => (
+                    <div key={idx} className="relative p-8 rounded-3xl bg-slate-50 group hover:bg-indigo-50 transition-colors">
+                        <span className="text-6xl font-black text-indigo-100 group-hover:text-indigo-200 transition-colors absolute top-4 left-4">{s.step}</span>
+                        <div className="relative z-10">
+                            <h4 className="text-lg font-black text-indigo-950 mb-2">{s.title}</h4>
+                            <p className="text-slate-400 font-bold text-xs">{s.desc}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>
   </div>
 );
 
 const DashboardView = ({ projects, setView, setPastedText }: any) => (
-  <div className="flex flex-col h-screen bg-[#fdfdfd] pt-16 animate-slide-up print:hidden overflow-hidden">
+  <div className="flex flex-col h-screen bg-[#fdfdfd] pt-16 animate-slide-up print:hidden overflow-hidden w-full">
     <div className="flex flex-1 overflow-hidden">
       <aside className="w-64 border-l border-slate-100 flex flex-col p-6 shrink-0 bg-slate-50/30">
         <nav className="space-y-1 mt-6 text-right" dir="rtl">
@@ -282,7 +317,7 @@ const DashboardView = ({ projects, setView, setPastedText }: any) => (
 );
 
 const AuthView = ({ mode, setIsLoggedIn, setView }: any) => (
-  <div className="flex-1 flex flex-col items-center justify-center pt-32 pb-20 px-6 animate-slide-up bg-slate-50/30 min-h-screen">
+  <div className="flex-1 flex flex-col items-center justify-center pt-32 pb-32 px-6 animate-slide-up bg-slate-50/30">
     <div className="max-w-md w-full bg-white p-10 rounded-[2.5rem] shadow-2xl border border-slate-100 text-right" dir="rtl">
       <h2 className="text-3xl font-black text-indigo-950 mb-2">{mode === 'login' ? 'مرحباً بعودتك' : 'انضم إلينا اليوم'}</h2>
       <p className="text-slate-400 font-bold mb-8 text-sm">{mode === 'login' ? 'سجل دخولك لمتابعة مشاريعك الذكية' : 'ابدأ رحلة الإبداع مع SPEC Studio'}</p>
@@ -305,7 +340,7 @@ const AuthView = ({ mode, setIsLoggedIn, setView }: any) => (
 );
 
 const CreationOptions = ({ setContentType, setView }: any) => (
-  <div className="pt-32 pb-32 px-6 max-w-6xl mx-auto animate-slide-up min-h-screen">
+  <div className="pt-32 pb-32 px-6 max-w-6xl mx-auto animate-slide-up">
     <div className="text-center mb-16 text-right" dir="rtl">
       <h1 className="text-4xl font-black text-indigo-950 mb-4 tracking-tighter">كيف تود أن تبدأ اليوم؟</h1>
       <p className="text-slate-500 font-bold">اختر الطريقة الأنسب لتحويل أفكارك إلى محتوى</p>
@@ -330,17 +365,36 @@ const CreationOptions = ({ setContentType, setView }: any) => (
 
 const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, additionalInstructions, setAdditionalInstructions, handleShufflePrompt, setView, transformationMode, setTransformationMode, tone, setTone, writeFor, setWriteFor, cardCount, setCardCount, handleGenerate, loading, theme, setTheme, designMode, setDesignMode }: any) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
-  const instructionsRef = useRef<HTMLTextAreaElement>(null);
-  const writeForRef = useRef<HTMLTextAreaElement>(null);
+
+  // Focus persistence fix: use internal state for textarea and sync only when needed
+  // This prevents the flickering issue caused by App re-renders
+  const [localVal, setLocalVal] = useState(mode === 'paste' ? pastedText : prompt);
+
+  // Fix: Helper function to adjust textarea height automatically
+  const adjustHeight = (el: HTMLTextAreaElement | null) => {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  };
+
+  useEffect(() => {
+    setLocalVal(mode === 'paste' ? pastedText : prompt);
+  }, [mode, prompt, pastedText]);
+
+  const onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setLocalVal(val);
+    if (mode === 'paste') setPastedText(val);
+    else setPrompt(val);
+    adjustHeight(contentRef.current);
+  };
 
   useLayoutEffect(() => {
     adjustHeight(contentRef.current);
-    adjustHeight(instructionsRef.current);
-    adjustHeight(writeForRef.current);
-  }, [mode, prompt, pastedText, additionalInstructions, writeFor]);
+  }, [localVal]);
 
   return (
-    <div className="h-screen bg-white flex flex-col overflow-hidden animate-slide-up">
+    <div className="flex-1 flex flex-col bg-white overflow-hidden animate-slide-up">
       <nav className="h-14 border-b border-slate-100 px-6 flex items-center justify-between shrink-0 bg-white mt-16 z-20">
         <div className="flex items-center gap-4">
           <button onClick={() => setView('creation-options')} className="text-xs font-bold text-slate-400 hover:text-indigo-600 flex items-center gap-2">
@@ -373,10 +427,9 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase">Write for...</span>
               <textarea 
-                ref={writeForRef} 
                 value={writeFor} 
                 onChange={e => { setWriteFor(e.target.value); }} 
-                className="w-full p-3.5 text-xs border border-slate-200 rounded-2xl bg-white outline-none focus:border-indigo-500 resize-none font-medium text-slate-700 leading-relaxed shadow-sm transition-all" 
+                className="w-full p-3.5 text-xs border border-slate-200 rounded-2xl bg-white outline-none focus:border-indigo-500 resize-none font-medium text-slate-700 leading-relaxed shadow-sm transition-all h-24" 
               />
             </div>
 
@@ -431,12 +484,9 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
               
               <textarea 
                 ref={contentRef}
-                value={mode === 'paste' ? pastedText : prompt}
-                onChange={e => {
-                  if (mode === 'paste') setPastedText(e.target.value);
-                  else setPrompt(e.target.value);
-                }}
-                placeholder={mode === 'paste' ? "اكتب أو الصق مذكراتك، ملفات إكسل، نصوص مطولة، أو أي تفاصيل هنا..." : "أدخل وصفاً دقيقاً للمشروع، مثلاً: خطة تسويق لمنتج جديد في دبي..."}
+                value={localVal}
+                onChange={onTextChange}
+                placeholder={mode === 'paste' ? "اكتب أو الصق مذكراتك، ملف إكسل، نصوص مطولة، أو أي تفاصيل هنا..." : "أدخل وصفاً دقيقاً للمشروع، مثلاً: خطة تسويق لمنتج جديد في دبي..."}
                 className="w-full p-12 text-right outline-none text-lg font-bold resize-none leading-relaxed text-slate-800 bg-white placeholder-slate-200 min-h-[400px] overflow-hidden"
                 dir="rtl"
               />
@@ -449,7 +499,7 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
                 )}
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-black bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm text-slate-500">
-                    {(mode === 'paste' ? pastedText : prompt).length} / 100,000
+                    {localVal.length} / 100,000
                   </span>
                   <InfoIcon />
                 </div>
@@ -493,11 +543,10 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
           <div className="p-8">
             <label className="text-[10px] font-black text-slate-300 uppercase block mb-3">قواعد التصميم والبيانات</label>
             <textarea 
-              ref={instructionsRef}
               value={additionalInstructions}
               onChange={e => { setAdditionalInstructions(e.target.value); }}
               placeholder="أدخل أي ملاحظات إضافية هنا..."
-              className="w-full p-6 text-xs bg-slate-50/50 rounded-3xl border border-slate-100 outline-none font-bold leading-relaxed text-slate-700 focus:border-indigo-200 resize-none transition-all overflow-hidden"
+              className="w-full p-6 text-xs bg-slate-50/50 rounded-3xl border border-slate-100 outline-none font-bold leading-relaxed text-slate-700 focus:border-indigo-200 resize-none transition-all h-48"
               dir="rtl"
             />
           </div>
@@ -508,38 +557,40 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
 };
 
 const StudioView = ({ loading, generatedContent, pastedText, prompt, exportToDocx, setView }: any) => (
-  <div className="min-h-screen bg-white pt-20 animate-slide-up flex flex-col">
-    <div className="flex-1 overflow-y-auto p-12 bg-slate-50/50 pb-32">
-      {loading ? (
-        <div className="flex flex-col items-center justify-center h-full py-20">
-          <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
-             <SparklesIcon className="w-10 h-10 text-indigo-600" />
-          </div>
-          <p className="text-indigo-950 font-black text-2xl tracking-tighter animate-pulse">جاري إنشاء مشروعك المخصص...</p>
-          <p className="text-slate-400 mt-3 font-bold">نطبق الآن القواعد التصميمية والتعليمات المحددة</p>
+  <div className="flex-1 overflow-y-auto p-12 bg-slate-50/50 pb-32">
+    {loading ? (
+      <div className="flex flex-col items-center justify-center h-full py-20">
+        <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6 animate-pulse">
+           <SparklesIcon className="w-10 h-10 text-indigo-600" />
         </div>
-      ) : generatedContent ? (
-        <div className="max-w-4xl mx-auto bg-white p-16 rounded-[4rem] shadow-2xl relative text-right border border-slate-100" dir="rtl">
-          <h2 className="text-4xl font-black mb-10 border-b pb-6 flex items-center gap-4 text-indigo-950">
-            <SparklesIcon className="text-indigo-600 w-8 h-8" /> 
-            {(pastedText || prompt).substring(0, 50)}
-          </h2>
-          <div className="prose prose-slate prose-xl max-w-none whitespace-pre-wrap font-sans text-slate-800 leading-relaxed text-justify">
-            {generatedContent}
-          </div>
-          <div className="mt-16 flex items-center gap-4 border-t pt-10 print:hidden">
-            <button onClick={exportToDocx} className="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all">تصدير Word</button>
-            <button onClick={() => window.print()} className="bg-slate-100 text-slate-700 px-10 py-4 rounded-2xl font-black hover:bg-slate-200 transition-all">طباعة / PDF</button>
-            <button onClick={() => setView('dashboard')} className="mr-auto text-slate-400 font-bold hover:text-indigo-600">العودة للوحة التحكم</button>
-          </div>
+        <p className="text-indigo-950 font-black text-2xl tracking-tighter animate-pulse">جاري إنشاء مشروعك المخصص...</p>
+        <p className="text-slate-400 mt-3 font-bold">نطبق الآن القواعد التصميمية والتعليمات المحددة</p>
+      </div>
+    ) : generatedContent && generatedContent !== "No content generated." ? (
+      <div className="max-w-4xl mx-auto bg-white p-16 rounded-[4rem] shadow-2xl relative text-right border border-slate-100 animate-slide-up" dir="rtl">
+        <h2 className="text-4xl font-black mb-10 border-b pb-6 flex items-center gap-4 text-indigo-950">
+          <SparklesIcon className="text-indigo-600 w-8 h-8" /> 
+          {(pastedText || prompt).substring(0, 50) || "مشروع جديد"}
+        </h2>
+        <div className="prose prose-slate prose-xl max-w-none whitespace-pre-wrap font-sans text-slate-800 leading-relaxed text-justify">
+          {generatedContent}
         </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center py-20">
-           <h3 className="text-2xl font-black text-slate-300 mb-6 tracking-tighter">لا يوجد محتوى لعرضه حالياً</h3>
-           <button onClick={() => setView('creation-options')} className="bg-indigo-600 text-white px-10 py-4 rounded-3xl font-black shadow-xl">ابدأ بإنشاء مشروعك الأول</button>
+        <div className="mt-16 flex items-center gap-4 border-t pt-10 print:hidden">
+          <button onClick={exportToDocx} className="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black shadow-xl hover:bg-indigo-700 transition-all">تصدير Word</button>
+          <button onClick={() => window.print()} className="bg-slate-100 text-slate-700 px-10 py-4 rounded-2xl font-black hover:bg-slate-200 transition-all">طباعة / PDF</button>
+          <button onClick={() => setView('dashboard')} className="mr-auto text-slate-400 font-bold hover:text-indigo-600">العودة للوحة التحكم</button>
         </div>
-      )}
-    </div>
+      </div>
+    ) : (
+      <div className="flex flex-col items-center justify-center py-20 text-center animate-slide-up h-full">
+         <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-6">
+            <InfoIcon className="w-10 h-10 text-slate-300" />
+         </div>
+         <h3 className="text-2xl font-black text-slate-400 mb-6 tracking-tighter">عذراً، لم نتمكن من توليد المحتوى</h3>
+         <p className="text-slate-400 max-w-sm mx-auto mb-10 font-bold">قد يكون هناك مشكلة في المدخلات أو اتصال الخادم. يرجى المحاولة مرة أخرى بوصف مختلف.</p>
+         <button onClick={() => setView('creation-options')} className="bg-indigo-600 text-white px-10 py-4 rounded-3xl font-black shadow-xl">ابدأ بإنشاء مشروعك الأول</button>
+      </div>
+    )}
   </div>
 );
 
@@ -635,7 +686,7 @@ const SettingsView = ({ activeTab, setActiveTab, userProfile, setUserProfile }: 
 );
 
 const AboutPage = () => (
-  <div className="animate-slide-up flex flex-col min-h-screen pt-48 pb-32">
+  <div className="animate-slide-up flex flex-col min-h-screen pt-48 pb-32 w-full">
     <div className="max-w-4xl mx-auto px-6 text-right" dir="rtl">
       <h1 className="text-5xl font-black mb-10 text-indigo-950 tracking-tighter">عن منصة SPEC</h1>
       <p className="text-xl text-slate-600 leading-relaxed mb-8 font-medium">
@@ -656,7 +707,7 @@ const AboutPage = () => (
 );
 
 const PricingPage = () => (
-  <div className="animate-slide-up flex flex-col min-h-screen pt-48 pb-32">
+  <div className="animate-slide-up flex flex-col min-h-screen pt-48 pb-32 w-full">
     <div className="max-w-7xl mx-auto px-6 text-center">
       <h1 className="text-5xl font-black mb-16 tracking-tighter">اختر الخطة التي تناسب إبداعك</h1>
       <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
@@ -709,12 +760,12 @@ const App = () => {
   const [designMode, setDesignMode] = useState<'freeform' | 'cardbycard'>('freeform');
   const [prompt, setPrompt] = useState("");
   const [pastedText, setPastedText] = useState("");
-  const [transformationMode, setTransformationMode] = useState<'generate' | 'summarize' | 'preserve'>('generate');
+  // Fix: Updated type name from 'summarize' to 'condense' to match UI options and logic
+  const [transformationMode, setTransformationMode] = useState<'generate' | 'condense' | 'preserve'>('generate');
   const [loading, setLoading] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'info' | 'security' | 'data'>('info');
 
-  // User Profile
   const [userProfile, setUserProfile] = useState({
     firstName: "طارق",
     lastName: "ملفي",
@@ -724,10 +775,9 @@ const App = () => {
     allowImprove: true
   });
 
-  // Settings
   const [tone, setTone] = useState("رسمي، محترف، استشاري");
   const [writeFor, setWriteFor] = useState("صانعي قرار تنفيذيين ومدراء تطوير أعمال ومسؤولين تسويق في شركات ومؤسسات ساعية لتوسع رقمي واستراتيجي");
-  const [theme, setTheme] = useState("Falcon Core theme");
+  const [theme, setTheme] = useState("Falcon");
   const [additionalInstructions, setAdditionalInstructions] = useState(`يمكنك وضع قواعد تصميم خاصة هنا، على سبيل المثال:
 - استخدام ألوان العلامة التجارية الخاصة بالشركة.
 - تجنب استخدام الصور البشرية والاعتماد على الأشكال التجريدية.`);
@@ -735,7 +785,6 @@ const App = () => {
   useEffect(() => {
     const saved = localStorage.getItem('spec_projects');
     if (saved) setProjects(JSON.parse(saved));
-    // Reset view to top when changing
     window.scrollTo(0, 0);
   }, [view]);
 
@@ -752,6 +801,7 @@ const App = () => {
   };
 
   const handleGenerate = async () => {
+    if (loading) return;
     setLoading(true);
     setView('studio');
     try {
@@ -760,11 +810,22 @@ const App = () => {
       }
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-pro-preview',
-        contents: `Create a ${contentType} based on: ${pastedText || prompt}. Mode: ${transformationMode}. Tone: ${tone}. Target: ${writeFor}. Instructions: ${additionalInstructions}`,
-        config: { thinkingConfig: { thinkingBudget: 2000 } }
+        model: 'gemini-3-flash-preview', // Speed up with flash for better experience
+        contents: `Act as a world-class ${contentType} creator. 
+        Objective: ${transformationMode === 'generate' ? 'Generate' : transformationMode === 'condense' ? 'Summarize' : 'Reformat'} content based on the input.
+        Tone: ${tone}.
+        Target Audience: ${writeFor}.
+        Specific Instructions: ${additionalInstructions}.
+        Input: ${pastedText || prompt || 'No input provided'}.
+        Formatting: Use professional markdown, Arabic language, and divide into approximately ${cardCount / 10} clear sections.`,
+        config: { thinkingConfig: { thinkingBudget: transformationMode === 'generate' ? 2000 : 0 } }
       });
-      setGeneratedContent(response.text || "No content generated.");
+      
+      const content = response.text;
+      if (!content || content.trim().length === 0) {
+          throw new Error("Empty response from AI");
+      }
+      setGeneratedContent(content);
       
       const newProj = {
         id: Math.random().toString(36).substring(7),
@@ -777,8 +838,8 @@ const App = () => {
       setProjects(updated);
       localStorage.setItem('spec_projects', JSON.stringify(updated));
     } catch (err) {
-      console.error(err);
-      alert("Error occurred.");
+      console.error("Generation Error:", err);
+      setGeneratedContent(null);
     } finally {
       setLoading(false);
     }
@@ -803,13 +864,8 @@ const App = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col overflow-x-hidden">
       <Header 
-        isLoggedIn={isLoggedIn} 
-        userProfile={userProfile} 
-        view={view} 
-        setView={setView} 
-        showProfileMenu={showProfileMenu} 
-        setShowProfileMenu={setShowProfileMenu}
-        setIsLoggedIn={setIsLoggedIn}
+        isLoggedIn={isLoggedIn} userProfile={userProfile} view={view} setView={setView} 
+        showProfileMenu={showProfileMenu} setShowProfileMenu={setShowProfileMenu} setIsLoggedIn={setIsLoggedIn}
       />
       
       <main className="flex-1 flex flex-col">
