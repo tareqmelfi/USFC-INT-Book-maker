@@ -22,7 +22,6 @@ const HomeIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${className}`}
 const SharedIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>;
 const SitesIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>;
 const SparklesIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-7.714 2.143L11 21l-2.143-7.714L1 12l6.857-2.143L11 3z"/></svg>;
-const PlusIcon = ({ className = "" }) => <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>;
 const ArrowLeftIcon = ({ className = "" }) => (
   <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
@@ -33,7 +32,16 @@ const SettingsIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${classNam
 const LogoutIcon = ({ className = "" }) => <svg className={`w-5 h-5 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>;
 const InfoIcon = ({ className = "" }) => <svg className={`w-4 h-4 ${className}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>;
 
-// --- Sub-components (outside App to prevent re-creation and focus loss) ---
+// --- Helper Functions ---
+const adjustHeight = (el: HTMLTextAreaElement | null) => {
+  if (!el) return;
+  // Reset height to auto to get the correct scrollHeight if content shrinks
+  el.style.height = 'auto';
+  // Set new height based on content
+  el.style.height = `${el.scrollHeight}px`;
+};
+
+// --- Sub-components ---
 
 const SidebarItem = ({ icon, label, active = false, onClick }: any) => (
   <button onClick={onClick} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium ${active ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100'}`}>
@@ -42,10 +50,10 @@ const SidebarItem = ({ icon, label, active = false, onClick }: any) => (
   </button>
 );
 
-const OptionCard = ({ icon, title, desc, image, tag, disabled = false, onClick }: any) => (
-  <div onClick={!disabled ? onClick : undefined} className={`bg-white rounded-3xl p-1 shadow-sm border border-slate-100 flex flex-col group transition-all ${disabled ? 'opacity-50 grayscale cursor-not-allowed' : 'cursor-pointer hover:shadow-xl'}`}>
+const OptionCard = ({ icon, title, desc, image, tag, onClick }: any) => (
+  <div onClick={onClick} className="bg-white rounded-3xl p-1 shadow-sm border border-slate-100 flex flex-col group transition-all cursor-pointer hover:shadow-xl">
     <div className="aspect-[4/3] rounded-[1.25rem] overflow-hidden mb-4 relative">
-      <img src={image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+      <img src={image} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={title} />
       {tag && <span className="absolute bottom-3 left-3 bg-white/90 px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-tighter">{tag}</span>}
     </div>
     <div className="px-5 pb-6 text-right" dir="rtl">
@@ -116,7 +124,7 @@ const Header = ({ isLoggedIn, userProfile, view, setView, showProfileMenu, setSh
 );
 
 const Footer = ({ setView }: any) => (
-  <footer className="bg-slate-900 text-white py-20 px-6 shrink-0">
+  <footer className="bg-slate-900 text-white py-20 px-6 shrink-0 mt-auto">
     <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-12 text-right" dir="rtl">
       <div className="col-span-2 md:col-span-1">
         <div className="flex items-center gap-3 mb-6">
@@ -340,7 +348,7 @@ const AuthView = ({ mode, setIsLoggedIn, setView }: any) => (
 );
 
 const CreationOptions = ({ setContentType, setView }: any) => (
-  <div className="pt-32 pb-32 px-6 max-w-6xl mx-auto animate-slide-up">
+  <div className="pt-32 pb-32 px-6 max-w-6xl mx-auto animate-slide-up min-h-screen">
     <div className="text-center mb-16 text-right" dir="rtl">
       <h1 className="text-4xl font-black text-indigo-950 mb-4 tracking-tighter">كيف تود أن تبدأ اليوم؟</h1>
       <p className="text-slate-500 font-bold">اختر الطريقة الأنسب لتحويل أفكارك إلى محتوى</p>
@@ -365,33 +373,30 @@ const CreationOptions = ({ setContentType, setView }: any) => (
 
 const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, additionalInstructions, setAdditionalInstructions, handleShufflePrompt, setView, transformationMode, setTransformationMode, tone, setTone, writeFor, setWriteFor, cardCount, setCardCount, handleGenerate, loading, theme, setTheme, designMode, setDesignMode }: any) => {
   const contentRef = useRef<HTMLTextAreaElement>(null);
+  const instructionsRef = useRef<HTMLTextAreaElement>(null);
+  const writeForRef = useRef<HTMLTextAreaElement>(null);
 
-  // Focus persistence fix: use internal state for textarea and sync only when needed
-  // This prevents the flickering issue caused by App re-renders
-  const [localVal, setLocalVal] = useState(mode === 'paste' ? pastedText : prompt);
-
-  // Fix: Helper function to adjust textarea height automatically
-  const adjustHeight = (el: HTMLTextAreaElement | null) => {
-    if (!el) return;
-    el.style.height = 'auto';
-    el.style.height = el.scrollHeight + 'px';
-  };
+  // Sync internal state with props to handle shuffle and external updates
+  const [localContent, setLocalContent] = useState(mode === 'paste' ? pastedText : prompt);
 
   useEffect(() => {
-    setLocalVal(mode === 'paste' ? pastedText : prompt);
+    setLocalContent(mode === 'paste' ? pastedText : prompt);
   }, [mode, prompt, pastedText]);
 
-  const onTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const val = e.target.value;
-    setLocalVal(val);
-    if (mode === 'paste') setPastedText(val);
-    else setPrompt(val);
-    adjustHeight(contentRef.current);
-  };
-
+  // Adjust height on initial render and content changes
   useLayoutEffect(() => {
     adjustHeight(contentRef.current);
-  }, [localVal]);
+    adjustHeight(instructionsRef.current);
+    adjustHeight(writeForRef.current);
+  }, [localContent, additionalInstructions, writeFor]);
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setLocalContent(value);
+    if (mode === 'paste') setPastedText(value);
+    else setPrompt(value);
+    adjustHeight(e.target);
+  };
 
   return (
     <div className="flex-1 flex flex-col bg-white overflow-hidden animate-slide-up">
@@ -408,7 +413,7 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
       </nav>
 
       <div className="flex-1 flex overflow-hidden">
-        {/* Left Settings */}
+        {/* Left Settings Sidebar */}
         <aside className="w-[320px] border-r border-slate-100 flex flex-col bg-slate-50/20 overflow-y-auto no-scrollbar p-6 space-y-8" dir="ltr">
           <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><SitesIcon /> Settings</h3>
           
@@ -427,9 +432,11 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
             <div className="space-y-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase">Write for...</span>
               <textarea 
+                ref={writeForRef}
                 value={writeFor} 
-                onChange={e => { setWriteFor(e.target.value); }} 
+                onChange={e => { setWriteFor(e.target.value); adjustHeight(e.target); }} 
                 className="w-full p-3.5 text-xs border border-slate-200 rounded-2xl bg-white outline-none focus:border-indigo-500 resize-none font-medium text-slate-700 leading-relaxed shadow-sm transition-all h-24" 
+                placeholder="من هو الجمهور المستهدف؟"
               />
             </div>
 
@@ -484,8 +491,8 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
               
               <textarea 
                 ref={contentRef}
-                value={localVal}
-                onChange={onTextChange}
+                value={localContent}
+                onChange={handleTextChange}
                 placeholder={mode === 'paste' ? "اكتب أو الصق مذكراتك، ملف إكسل، نصوص مطولة، أو أي تفاصيل هنا..." : "أدخل وصفاً دقيقاً للمشروع، مثلاً: خطة تسويق لمنتج جديد في دبي..."}
                 className="w-full p-12 text-right outline-none text-lg font-bold resize-none leading-relaxed text-slate-800 bg-white placeholder-slate-200 min-h-[400px] overflow-hidden"
                 dir="rtl"
@@ -499,7 +506,7 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
                 )}
                 <div className="flex items-center gap-3">
                   <span className="text-[10px] font-black bg-white px-3 py-1 rounded-full border border-slate-100 shadow-sm text-slate-500">
-                    {localVal.length} / 100,000
+                    {localContent.length.toLocaleString()} / 100,000
                   </span>
                   <InfoIcon />
                 </div>
@@ -507,7 +514,7 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
             </div>
           </div>
 
-          {/* Action Bar */}
+          {/* Fixed Action Bar at the Bottom */}
           <div className="h-24 bg-white/80 backdrop-blur-md border-t border-slate-100 px-12 flex items-center justify-between sticky bottom-0 z-30 shadow-2xl">
             <div className="flex items-center gap-3 text-sm font-black text-slate-500">
               <SparklesIcon className="text-indigo-600 scale-125" />
@@ -535,7 +542,7 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
           </div>
         </main>
 
-        {/* Right Sidebar */}
+        {/* Right Sidebar for Instructions */}
         <aside className="w-[360px] border-l border-slate-100 flex flex-col bg-white overflow-y-auto no-scrollbar">
           <div className="h-14 border-b border-slate-100 px-8 flex items-center justify-between bg-white sticky top-0 z-10">
             <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">التعليمات الإضافية</h3>
@@ -543,8 +550,9 @@ const PromptEditorView = ({ mode, prompt, setPrompt, pastedText, setPastedText, 
           <div className="p-8">
             <label className="text-[10px] font-black text-slate-300 uppercase block mb-3">قواعد التصميم والبيانات</label>
             <textarea 
+              ref={instructionsRef}
               value={additionalInstructions}
-              onChange={e => { setAdditionalInstructions(e.target.value); }}
+              onChange={e => { setAdditionalInstructions(e.target.value); adjustHeight(e.target); }}
               placeholder="أدخل أي ملاحظات إضافية هنا..."
               className="w-full p-6 text-xs bg-slate-50/50 rounded-3xl border border-slate-100 outline-none font-bold leading-relaxed text-slate-700 focus:border-indigo-200 resize-none transition-all h-48"
               dir="rtl"
@@ -688,7 +696,7 @@ const SettingsView = ({ activeTab, setActiveTab, userProfile, setUserProfile }: 
 const AboutPage = () => (
   <div className="animate-slide-up flex flex-col min-h-screen pt-48 pb-32 w-full">
     <div className="max-w-4xl mx-auto px-6 text-right" dir="rtl">
-      <h1 className="text-5xl font-black mb-10 text-indigo-950 tracking-tighter">عن منصة SPEC</h1>
+      <h1 className="text-5xl font-black mb-10 text-indigo-950 tracking-tighter text-right">عن منصة SPEC</h1>
       <p className="text-xl text-slate-600 leading-relaxed mb-8 font-medium">
         SPEC هي منصة إبداعية متطورة تهدف إلى جسر الفجوة بين الفكرة والتنفيذ البصري. نحن نؤمن بأن كل شخص لديه قصة ليرويها، والمهارات التقنية لا ينبغي أن تكون عائقاً أمام التميز.
       </p>
@@ -760,7 +768,6 @@ const App = () => {
   const [designMode, setDesignMode] = useState<'freeform' | 'cardbycard'>('freeform');
   const [prompt, setPrompt] = useState("");
   const [pastedText, setPastedText] = useState("");
-  // Fix: Updated type name from 'summarize' to 'condense' to match UI options and logic
   const [transformationMode, setTransformationMode] = useState<'generate' | 'condense' | 'preserve'>('generate');
   const [loading, setLoading] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string | null>(null);
@@ -810,14 +817,14 @@ const App = () => {
       }
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview', // Speed up with flash for better experience
-        contents: `Act as a world-class ${contentType} creator. 
+        model: 'gemini-3-flash-preview', 
+        contents: `Act as a world-class ${contentType} creator for the platform "Spec". 
         Objective: ${transformationMode === 'generate' ? 'Generate' : transformationMode === 'condense' ? 'Summarize' : 'Reformat'} content based on the input.
         Tone: ${tone}.
         Target Audience: ${writeFor}.
         Specific Instructions: ${additionalInstructions}.
         Input: ${pastedText || prompt || 'No input provided'}.
-        Formatting: Use professional markdown, Arabic language, and divide into approximately ${cardCount / 10} clear sections.`,
+        Formatting: Professional Arabic, structured sections, and creative flow.`,
         config: { thinkingConfig: { thinkingBudget: transformationMode === 'generate' ? 2000 : 0 } }
       });
       
