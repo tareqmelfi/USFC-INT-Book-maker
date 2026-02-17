@@ -1,5 +1,5 @@
 {
-  "name": "usfc-int-book-maker",
+  "name": "spec-studio-|-استوديو-الإبداع",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,9 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.4",
-    "@google/genai": "^0.0.2",
-    "react-dom": "^19.2.4"
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "@google/genai": "latest",
+    "docx": "8.2.2"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",
